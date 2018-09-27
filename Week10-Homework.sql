@@ -226,10 +226,21 @@ ORDER BY revenue DESC
 LIMIT 5;
 
 -- 8a. In your new role as an executive, you would like to have an easy way of viewing the Top five genres by gross revenue. Use the solution from the problem above to create a view. If you haven't solved 7h, you can substitute another query to create a view.
+CREATE VIEW top_five_genres AS
+SELECT category.name, 
+	   CONCAT("$", FORMAT(SUM(payment.amount), 2)) AS revenue
+FROM category, film_category, inventory, rental, payment
+WHERE (category.category_id = film_category.category_id) AND
+	  (film_category.film_id = inventory.film_id) AND
+	  (inventory.inventory_id = rental.inventory_id) AND
+	  (rental.rental_id = payment.rental_id)
+GROUP BY category.name
+ORDER BY revenue DESC
+LIMIT 5;
 
 -- 8b. How would you display the view that you created in 8a?
-
+SELECT * FROM sakila.top_five_genres;
 
 -- 8c. You find that you no longer need the view top_five_genres. Write a query to delete it.
-
+DROP VIEW IF EXISTS sakila.top_five_genres;
 
